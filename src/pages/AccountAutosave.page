@@ -1,0 +1,28 @@
+<apex:page standardController="Account" extensions="AutosaveActionService" showHeader="true" sidebar="true">
+	<script type="text/javascript">
+		var acctId = "{!account.Id}";
+		if(!acctId)
+		{
+			acctId = null;
+		} 
+		
+		function saveAccountField(fieldName, fieldValue) {
+		    Visualforce.remoting.Manager.invokeAction(
+		        '{!$RemoteAction.AutosaveActionService.updateFieldValue}', 
+		        acctId, fieldName, fieldValue, 
+		        function(result, event){
+		            if (event.status) {
+		            	console.log("Saved!");
+		            } else if (event.type === 'exception') {
+		                console.log(event.message);
+		            }
+		        }, 
+		        {escape: true}
+		    );
+		}
+	</script>
+
+	<apex:form>
+		<apex:inputField value="{!account.name}" onblur="saveAccountField('name', this.value);" />
+	</apex:form>
+</apex:page>
